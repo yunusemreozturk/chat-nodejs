@@ -15,8 +15,7 @@ const EXPRESS_SESSION_SECRET = process.env.EXPRESS_SESSION_SECRET;
 const server = createServer(app)
 const io = new Server(server, {
     connectionStateRecovery: {
-        maxDisconnectionDuration: 2 * 60 * 1000,
-        skipMiddlewares: true,
+        maxDisconnectionDuration: 2 * 60 * 1000, skipMiddlewares: true,
     }
 });
 
@@ -33,12 +32,10 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', async (socket) => {
-    console.log('a user connected')
-
     //on message send
-    socket.on('chat message', async (msg, clientOffset, callback) => {
+    socket.on('chat message', async (msg, clientOffset, accessToken, callback) => {
         try {
-            const messageModel = new Message({'message': msg, 'clientOffset': clientOffset});
+            const messageModel = new Message({'message': msg, 'clientOffset': clientOffset, 'userToken': accessToken,});
             const messageSave = await messageModel.save();
 
             io.emit('chat message', msg, messageSave.id);
@@ -54,8 +51,6 @@ io.on('connection', async (socket) => {
             const serverOffset = socket.handshake.auth.serverOffset || 0;
             const messageList = await Message.find({id: {$gt: serverOffset}});
 
-            console.log(`serverOffset: ${serverOffset}: ${messageList.length}`)
-
             messageList.forEach((message) => {
                 socket.emit('chat message', message.message)
             })
@@ -66,5 +61,5 @@ io.on('connection', async (socket) => {
 })
 
 server.listen(port, () => {
-    console.log('Server is running on localhost:port:' + port)
+    console.log(`Server is running on http://localhost:${port}`)
 })

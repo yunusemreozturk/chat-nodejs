@@ -86,15 +86,23 @@
     const messages = document.getElementById('messages');
     const toggleButton = document.getElementById('toggle-btn');
 
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
         if (input.value) {
             const clientOffset = `${socket.id}-${counter++}`;
-            socket.emit('chat message', input.value, clientOffset);
+            socket.emit('chat message', input.value, clientOffset, getUrlParameter('access_token'));
             input.value = '';
         }
     });
+
 
     toggleButton.addEventListener('click', (e) => {
         e.preventDefault();
@@ -106,10 +114,6 @@
             toggleButton.innerText = 'Disconnect';
             socket.connect();
         }
-    })
-
-    socket.on('connect', () => {
-        console.log('recovered?', socket.recovered);
     })
 
     socket.on('chat message', (msg, serverOffset) => {
