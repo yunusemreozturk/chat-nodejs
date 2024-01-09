@@ -7,15 +7,17 @@ const {createServer} = require('node:http')
 const {Server} = require('socket.io')
 const mongoSanitize = require('express-mongo-sanitize');
 const Message = require('./src/models/message.model.js')
+const Room = require('./src/models/room.model')
 const path = require("path");
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 const EXPRESS_SESSION_SECRET = process.env.EXPRESS_SESSION_SECRET;
 const server = createServer(app)
 const io = new Server(server, {
     connectionStateRecovery: {
-        maxDisconnectionDuration: 2 * 60 * 1000, skipMiddlewares: true,
+        maxDisconnectionDuration: 2 * 60 * 1000,
+        skipMiddlewares: true,
     }
 });
 
@@ -32,13 +34,16 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', async (socket) => {
-    //on message send
     socket.on('chat message', async (msg, clientOffset, accessToken, callback) => {
         try {
-            const messageModel = new Message({'message': msg, 'clientOffset': clientOffset, 'userToken': accessToken,});
-            const messageSave = await messageModel.save();
+            const message = {'message': msg, 'clientOffset': clientOffset, 'userToken': accessToken};
 
-            io.emit('chat message', msg, messageSave.id);
+            const messageModel = new Message(message);
+            const user = await getUser(message.userToken);
+
+            await messageModel.save();
+
+            io.emit('chat message', message, user);
 
             callback();
         } catch (e) {
@@ -49,16 +54,52 @@ io.on('connection', async (socket) => {
     if (!socket.recovered) {
         try {
             const serverOffset = socket.handshake.auth.serverOffset || 0;
-            const messageList = await Message.find({id: {$gt: serverOffset}});
+            let messageList = await Message.find({id: {$gt: serverOffset}});
 
-            messageList.forEach((message) => {
-                socket.emit('chat message', message.message)
-            })
+            messageList = messageList.sort((a, b) => Date(a.createdAt) - Date(b.createdAt));
+
+            for (let i = 0; i < messageList.length; i++) {
+                const message = messageList[i];
+                const user = await getUser(message.userToken);
+
+                socket.emit('chat message', message, user)
+            }
         } catch (e) {
             console.log(`Error: socket.recovered: ${e}`)
         }
     }
 })
+
+
+function getUser(token) {
+    const apiUrl = 'http://localhost:3000/api/auth/get_user';
+    let headers = new Headers();
+
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
+
+    headers.append('Access-Control-Allow-Origin', 'http://localhost:3000');
+    headers.append('Access-Control-Allow-Credentials', 'true');
+
+    return fetch(apiUrl, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({"token": token}),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // console.log('Data from API:', data);
+            return data;
+        })
+        .catch(error => {
+            console.error('Error posting data:', error);
+        });
+}
 
 server.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`)

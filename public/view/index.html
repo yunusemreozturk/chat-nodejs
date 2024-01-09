@@ -93,6 +93,7 @@
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
 
+    // on click submit button
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -101,6 +102,15 @@
             socket.emit('chat message', input.value, clientOffset, getUrlParameter('access_token'));
             input.value = '';
         }
+    });
+
+    // on message received
+    socket.on('chat message', async (message, user) => {
+        const item = document.createElement('li');
+        item.textContent = user.data.email + ": " + message.message;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+        socket.auth.serverOffset = message.serverOffset;
     });
 
 
@@ -115,14 +125,6 @@
             socket.connect();
         }
     })
-
-    socket.on('chat message', (msg, serverOffset) => {
-        const item = document.createElement('li');
-        item.textContent = msg;
-        messages.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
-        socket.auth.serverOffset = serverOffset;
-    });
 </script>
 </html>
 
