@@ -99,7 +99,7 @@
 
         if (input.value) {
             const clientOffset = `${socket.id}-${counter++}`;
-            socket.emit('chat message', input.value, clientOffset, getUrlParameter('access_token'));
+            socket.emit('general', input.value, clientOffset, getUrlParameter('access_token'), 'general');
             input.value = '';
         }
     });

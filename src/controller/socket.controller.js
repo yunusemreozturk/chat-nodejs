@@ -5,8 +5,6 @@ const {io} = require("../socket/socket");
 const getUser = require("../utils/auth_utils")
 
 const connectionListener = async (socket) => {
-    console.log("cg")
-
     if (!socket.recovered) {
         try {
             const serverOffset = socket.handshake.auth.serverOffset || 0;
@@ -28,8 +26,6 @@ const connectionListener = async (socket) => {
 
 const generalChatListener = async (msg, clientOffset, accessToken, roomId, callback) => {
     if (roomId !== chatTypeEnum.GENERAL) await (new Room({'type': 0}).save())
-
-    console.log("bennelli")
 
     try {
         const message = {
