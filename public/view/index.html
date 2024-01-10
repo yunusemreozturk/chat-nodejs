@@ -105,13 +105,14 @@
     });
 
     // on message received
-    socket.on('chat message', async (message, user) => {
+    socket.on('general', async (message, user) => {
         const item = document.createElement('li');
         item.textContent = user.data.email + ": " + message.message;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
         socket.auth.serverOffset = message.serverOffset;
     });
+
 
 
     toggleButton.addEventListener('click', (e) => {

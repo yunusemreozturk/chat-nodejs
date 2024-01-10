@@ -16,7 +16,7 @@ const connectionListener = async (socket) => {
                 const message = messageList[i];
                 const user = await getUser(message.userToken);
 
-                socket.emit('chat message', message, user)
+                socket.emit(chatTypeEnum.GENERAL, message, user)
             }
         } catch (e) {
             console.log(`Error: socket.recovered: ${e}`)
@@ -40,7 +40,7 @@ const generalChatListener = async (msg, clientOffset, accessToken, roomId, callb
 
         await messageModel.save();
 
-        io.emit('chat message', message, user);
+        io.emit(chatTypeEnum.GENERAL, message, user);
 
         callback();
     } catch (e) {
