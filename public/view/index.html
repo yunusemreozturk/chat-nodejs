@@ -70,13 +70,9 @@
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    let counter = 0;
     const socket = io({
         reconnectionDelay: 1000, // defaults to 1000
         reconnectionDelayMax: 20000,
-        auth: {
-            serverOffset: 0
-        },
         ackTimeout: 10000,
         retries: 3
     });
@@ -93,13 +89,15 @@
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
 
-    // on click submit button
+    socket.auth.accessToken = getUrlParameter('access_token')
+
+
+        // on click submit button
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
         if (input.value) {
-            const clientOffset = `${socket.id}-${counter++}`;
-            socket.emit('general', input.value, clientOffset, getUrlParameter('access_token'), 'general');
+            socket.emit('general', input.value, getUrlParameter('access_token'));
             input.value = '';
         }
     });
@@ -110,7 +108,6 @@
         item.textContent = user.data.email + ": " + message.message;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
-        socket.auth.serverOffset = message.serverOffset;
     });
 
 

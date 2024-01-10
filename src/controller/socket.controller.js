@@ -7,8 +7,7 @@ const getUser = require("../utils/auth_utils")
 const connectionListener = async (socket) => {
     if (!socket.recovered) {
         try {
-            const serverOffset = socket.handshake.auth.serverOffset || 0;
-            let messageList = await Message.find({id: {$gt: serverOffset}});
+            let messageList = await Message.find({});
 
             messageList = messageList.sort((a, b) => Date(a.createdAt) - Date(b.createdAt));
 
@@ -24,15 +23,20 @@ const connectionListener = async (socket) => {
     }
 }
 
-const generalChatListener = async (msg, clientOffset, accessToken, roomId, callback) => {
-    if (roomId !== chatTypeEnum.GENERAL) await (new Room({'type': 0}).save())
+const disconnectionListener = () => {
 
+}
+
+const generalChatListener = async (msg, callback) => {
     try {
+        // const room = new Room({'type': 0})
+        // await room.save();
+        console.log(io.auth.access_token);
+
         const message = {
             'message': msg,
-            'clientOffset': clientOffset,
-            'userToken': accessToken,
-            'roomId': roomId,
+            'userToken': io.auth.access_token,
+            'roomId': 'general',
         };
 
         const messageModel = new Message(message);

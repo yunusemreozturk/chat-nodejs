@@ -7,6 +7,8 @@ const server = createServer(app)
 const io = new Server(server, {
     connectionStateRecovery: {
         maxDisconnectionDuration: 2 * 60 * 1000, skipMiddlewares: true,
+    }, cors: {
+        origin: process.env.URL
     }
 });
 
