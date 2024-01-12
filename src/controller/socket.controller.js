@@ -1,7 +1,7 @@
 const Room = require("../models/room.model");
 const Message = require("../models/message.model");
 const chatTypeEnum = require("../models/chat.type.enum");
-const {io} = require("../socket/socket");
+const {io, server} = require("../socket/socket");
 const getUser = require("../utils/auth_utils")
 
 const connectionListener = async (socket) => {
@@ -23,19 +23,14 @@ const connectionListener = async (socket) => {
     }
 }
 
-const disconnectionListener = () => {
-
-}
-
-const generalChatListener = async (msg, callback) => {
+const generalChatListener = async (msg, accessToken, callback) => {
     try {
         // const room = new Room({'type': 0})
         // await room.save();
-        console.log(io.auth.access_token);
 
         const message = {
             'message': msg,
-            'userToken': io.auth.access_token,
+            'userToken': accessToken,
             'roomId': 'general',
         };
 

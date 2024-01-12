@@ -81,6 +81,25 @@
     const input = document.getElementById('input');
     const messages = document.getElementById('messages');
     const toggleButton = document.getElementById('toggle-btn');
+    const accessToken = getUrlParameter('access_token');
+    const sessionID = localStorage.getItem("sessionID");
+
+    if (sessionID) {
+        console.log(`6# sessionID: ${sessionID} = accessToken: ${accessToken}`)
+
+        socket.auth = {sessionID};
+
+        const seniDeniyorum = 'denemeDeneme'
+        socket.auth = {seniDeniyorum}
+        // socket.connect();
+    }
+
+    socket.auth = {accessToken};
+
+    console.log(`7# sessionID: ${socket.auth.sessionID} = accessToken: ${accessToken}`)
+    console.log(`19# seniDeniyorum: ${socket.auth.seniDeniyorum} = accessToken: ${accessToken}`)
+
+
 
     function getUrlParameter(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -89,15 +108,12 @@
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
 
-    socket.auth.accessToken = getUrlParameter('access_token')
-
-
-        // on click submit button
+    // on click submit button
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
         if (input.value) {
-            socket.emit('general', input.value, getUrlParameter('access_token'));
+            socket.emit('general', input.value);
             input.value = '';
         }
     });
@@ -110,6 +126,25 @@
         window.scrollTo(0, document.body.scrollHeight);
     });
 
+    socket.on("session", (sessionID) => {
+        socket.auth = {sessionID};
+        localStorage.setItem("sessionID", sessionID);
+        console.log(`8# sessionID: ${sessionID} = accessToken: ${accessToken}`)
+    });
+
+    // socket.on('user connected', (user) => {
+    //     const item = document.createElement('li');
+    //     item.textContent = user.email + " sohbete katıldı";
+    //     messages.appendChild(item);
+    //     window.scrollTo(0, document.body.scrollHeight);
+    // });
+    //
+    // socket.on('user disconnect', (user) => {
+    //     const item = document.createElement('li');
+    //     item.textContent = user.email + " sohbetten çıktı";
+    //     messages.appendChild(item);
+    //     window.scrollTo(0, document.body.scrollHeight);
+    // });
 
     toggleButton.addEventListener('click', (e) => {
         e.preventDefault();
