@@ -70,13 +70,6 @@
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    const socket = io({
-        reconnectionDelay: 1000, // defaults to 1000
-        reconnectionDelayMax: 20000,
-        ackTimeout: 10000,
-        retries: 3
-    });
-
     const form = document.getElementById('form');
     const input = document.getElementById('input');
     const messages = document.getElementById('messages');
@@ -84,22 +77,24 @@
     const accessToken = getUrlParameter('access_token');
     const sessionID = localStorage.getItem("sessionID");
 
+    const socket = io({
+        auth: {
+            sessionID: sessionID
+        }
+    });
+
+    console.log(`19# sessionID: ${socket.auth.sessionID}`)
+
     if (sessionID) {
         console.log(`6# sessionID: ${sessionID} = accessToken: ${accessToken}`)
 
-        socket.auth = {sessionID};
-
-        const seniDeniyorum = 'denemeDeneme'
-        socket.auth = {seniDeniyorum}
-        // socket.connect();
+        socket.auth.sessionID = sessionID;
+        socket.connect();
     }
 
     socket.auth = {accessToken};
 
     console.log(`7# sessionID: ${socket.auth.sessionID} = accessToken: ${accessToken}`)
-    console.log(`19# seniDeniyorum: ${socket.auth.seniDeniyorum} = accessToken: ${accessToken}`)
-
-
 
     function getUrlParameter(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
