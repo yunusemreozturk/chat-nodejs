@@ -5,6 +5,3 @@ mongoose.connect(process.env.DATABASE_URL).then(() => {
 }).catch((err) => {
     console.log('DB_connect: Error', err)
 })
-
-
-

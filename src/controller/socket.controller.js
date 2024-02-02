@@ -23,7 +23,7 @@ const connectionListener = async (socket) => {
     }
 }
 
-const generalChatListener = async (msg, accessToken, callback) => {
+const generalChatListener = async (msg, accessToken) => {
     try {
         // const room = new Room({'type': 0})
         // await room.save();
@@ -40,8 +40,6 @@ const generalChatListener = async (msg, accessToken, callback) => {
         await messageModel.save();
 
         io.emit(chatTypeEnum.GENERAL, message, user);
-
-        callback();
     } catch (e) {
         console.log(`Error: chat message: ${e}`)
     }

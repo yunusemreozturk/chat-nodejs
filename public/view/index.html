@@ -3,62 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Socket.IO chat</title>
-    <style>
-        body {
-            margin: 0;
-            padding-bottom: 3rem;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        #form {
-            background: rgba(0, 0, 0, 0.15);
-            padding: 0.25rem;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            height: 3rem;
-            box-sizing: border-box;
-            backdrop-filter: blur(10px);
-        }
-
-        #input {
-            border: none;
-            padding: 0 1rem;
-            flex-grow: 1;
-            border-radius: 2rem;
-            margin: 0.25rem;
-        }
-
-        #input:focus {
-            outline: none;
-        }
-
-        #form > button {
-            background: #333;
-            border: none;
-            padding: 0 1rem;
-            margin: 0.25rem;
-            border-radius: 3px;
-            outline: none;
-            color: #fff;
-        }
-
-        #messages {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        #messages > li {
-            padding: 0.5rem 1rem;
-        }
-
-        #messages > li:nth-child(odd) {
-            background: #efefef;
-        }
-    </style>
+    <link rel="stylesheet" href="/view/mystyle.css">
 </head>
 <body>
 <ul id="messages"></ul>
@@ -83,18 +28,9 @@
         }
     });
 
-    console.log(`19# sessionID: ${socket.auth.sessionID}`)
+    socket.connect();
 
-    if (sessionID) {
-        console.log(`6# sessionID: ${sessionID} = accessToken: ${accessToken}`)
-
-        socket.auth.sessionID = sessionID;
-        socket.connect();
-    }
-
-    socket.auth = {accessToken};
-
-    console.log(`7# sessionID: ${socket.auth.sessionID} = accessToken: ${accessToken}`)
+    socket.auth = {accessToken, sessionID};
 
     function getUrlParameter(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -124,22 +60,21 @@
     socket.on("session", (sessionID) => {
         socket.auth = {sessionID};
         localStorage.setItem("sessionID", sessionID);
-        console.log(`8# sessionID: ${sessionID} = accessToken: ${accessToken}`)
     });
 
-    // socket.on('user connected', (user) => {
-    //     const item = document.createElement('li');
-    //     item.textContent = user.email + " sohbete katıldı";
-    //     messages.appendChild(item);
-    //     window.scrollTo(0, document.body.scrollHeight);
-    // });
-    //
-    // socket.on('user disconnect', (user) => {
-    //     const item = document.createElement('li');
-    //     item.textContent = user.email + " sohbetten çıktı";
-    //     messages.appendChild(item);
-    //     window.scrollTo(0, document.body.scrollHeight);
-    // });
+    socket.on('user connected', (user) => {
+        const item = document.createElement('li');
+        item.textContent = user.email + " sohbete katıldı";
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    socket.on('user disconnect', (user) => {
+        const item = document.createElement('li');
+        item.textContent = user.email + " sohbetten çıktı";
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+    });
 
     toggleButton.addEventListener('click', (e) => {
         e.preventDefault();
