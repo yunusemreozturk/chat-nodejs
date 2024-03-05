@@ -1,4 +1,3 @@
-const Room = require("../models/room.model");
 const Message = require("../models/message.model");
 const chatTypeEnum = require("../models/chat.type.enum");
 const {io, server} = require("../socket/socket");
@@ -15,7 +14,9 @@ const connectionListener = async (socket) => {
                 const message = messageList[i];
                 const user = await getUser(message.userToken);
 
-                socket.emit(chatTypeEnum.GENERAL, message, user)
+                socket.emit(chatTypeEnum.GENERAL, {message, user})
+
+                console.log('yollandı');
             }
         } catch (e) {
             console.log(`Error: socket.recovered: ${e}`)

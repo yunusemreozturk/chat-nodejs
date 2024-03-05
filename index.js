@@ -30,12 +30,17 @@ const crypto = require("crypto");
 const randomId = () => crypto.randomBytes(8).toString("hex");
 
 io.use((socket, next) => {
-    const sessionID = socket.handshake.auth.sessionID;
-    const accessToken = socket.handshake.auth.accessToken;
+    console.log('#1')
+    const sessionID = socket.handshake.headers.session_id;
+    const accessToken = socket.handshake.headers.access_token;
 
     if (sessionID) {
+        console.log('#2')
+
         const session = sessionStore.findSession(sessionID);
         if (session) {
+            console.log('#3')
+
             socket.sessionID = sessionID;
             socket.accessToken = session.accessToken;
 
@@ -44,8 +49,13 @@ io.use((socket, next) => {
     }
 
     if (!accessToken) {
+        console.log('#4')
+
         return next(new Error("invalid accessToken"));
     }
+
+
+    console.log('#5')
 
     // create new session
     socket.sessionID = randomId();
