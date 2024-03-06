@@ -1,22 +1,22 @@
 const Message = require("../models/message.model");
 const chatTypeEnum = require("../models/chat.type.enum");
 const {io, server} = require("../socket/socket");
-const getUser = require("../utils/auth_utils")
 
 const connectionListener = async (socket) => {
     if (!socket.recovered) {
         try {
+            const user = socket.user;
+
             let messageList = await Message.find({});
 
             messageList = messageList.sort((a, b) => Date(a.createdAt) - Date(b.createdAt));
 
             for (let i = 0; i < messageList.length; i++) {
                 const message = messageList[i];
-                const user = await getUser(message.userToken);
 
                 socket.emit(chatTypeEnum.GENERAL, {message, user})
 
-                console.log('yollandı');
+                console.log(`yollandı: ${i}`);
             }
         } catch (e) {
             console.log(`Error: socket.recovered: ${e}`)
@@ -24,19 +24,17 @@ const connectionListener = async (socket) => {
     }
 }
 
-const generalChatListener = async (msg, accessToken) => {
+const generalChat = async (socket, msg, accessToken) => {
     try {
-        // const room = new Room({'type': 0})
-        // await room.save();
+        const user = socket.user;
 
         const message = {
             'message': msg,
             'userToken': accessToken,
-            'roomId': 'general',
+            'roomId': chatTypeEnum.GENERAL,
         };
 
         const messageModel = new Message(message);
-        const user = await getUser(message.userToken);
 
         await messageModel.save();
 
@@ -46,4 +44,4 @@ const generalChatListener = async (msg, accessToken) => {
     }
 }
 
-module.exports = {generalChatListener, connectionListener}
+module.exports = {generalChat, connectionListener}
