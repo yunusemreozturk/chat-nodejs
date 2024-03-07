@@ -75,10 +75,10 @@ io.on('connection', async (socket) => {
 
         socket.emit("session", sessionID);
 
-        socket.broadcast.emit('user connected', user.data);
+        // socket.broadcast.emit('user connected', user.data);
 
         socket.on('disconnect', () => {
-            socket.broadcast.emit('user disconnect', user.data);
+            // socket.broadcast.emit('user disconnect', user.data);
 
             // update the connection status of the session
             sessionStore.saveSession(sessionID, {

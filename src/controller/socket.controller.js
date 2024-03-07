@@ -7,7 +7,7 @@ const connectionListener = async (socket) => {
         try {
             const user = socket.user;
 
-            let messageList = await Message.find({});
+            let messageList = await Message.find({'roomId': chatTypeEnum.GENERAL});
 
             messageList = messageList.sort((a, b) => Date(a.createdAt) - Date(b.createdAt));
 
