@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/view/index.html'))
 });
 
-async function getRooms(roomIds) {
+async function getRooms(userId) {
     var roomModel = await RoomModel.find({users: roomIds});
 
     return JSON.stringify(roomModel);
@@ -58,7 +58,12 @@ io.on('connection', async (socket) => {
 
     socket.on('joinRoom', async (to, type) => {
         if (!(to && type)) return;
-        const room = await RoomModel.findOne({users: [accessToken, to], type: type});
+
+        if (type === 0 || type === 2) {
+            const room = await RoomModel.findById(to);
+        } else if (type === 1) {
+            const room = await RoomModel.findOne({users: [accessToken, to], type: 1});
+        }
 
         if (room) {
             let roomId = room.id;
