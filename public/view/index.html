@@ -62,6 +62,14 @@
         localStorage.setItem("sessionID", sessionID);
     });
 
+    socket.on("test", (msg) => {
+        console.log(`message: ${msg}`)
+        const item = document.createElement('li');
+        item.textContent = 'test' + msg;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+
     socket.on('user connected', (user) => {
         const item = document.createElement('li');
         item.textContent = user.email + " sohbete katıldı";
