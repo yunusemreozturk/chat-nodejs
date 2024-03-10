@@ -29,13 +29,10 @@ app.get('/', (req, res) => {
 });
 
 async function getRooms(userId) {
-    var roomModel = await RoomModel.find({users: roomIds});
+    const privateAndGroupChats = await RoomModel.find({users: userId});
+    const generalChats = await RoomModel.find({type: 0});
 
-    return JSON.stringify(roomModel);
-}
-
-async function getUserMessage(roomId) {
-    return MessageModel.find({roomId: roomId});
+    return [...privateAndGroupChats, ...generalChats];
 }
 
 io.on('connection', async (socket) => {
@@ -59,10 +56,12 @@ io.on('connection', async (socket) => {
     socket.on('joinRoom', async (to, type) => {
         if (!(to && type)) return;
 
+        let room;
+        //todo: burası kalkabilir createRoom
         if (type === 0 || type === 2) {
-            const room = await RoomModel.findById(to);
+            room = await RoomModel.findById(to);
         } else if (type === 1) {
-            const room = await RoomModel.findOne({users: [accessToken, to], type: 1});
+            room = await RoomModel.findOne({users: [accessToken, to], type: 1});
         }
 
         if (room) {
@@ -82,10 +81,11 @@ io.on('connection', async (socket) => {
             await roomModel.save();
 
             socket.join(roomModel.id);
+
+            socket.emit('rooms', await getRooms(accessToken));
         }
     });
 
-    //todo: kullanıcının ilk mesajda odaya join'leme işlemini sendMessage'da halledelim
     socket.on('sendMessage', async (to, type, msg) => {
         if (!(to && type && msg)) return;
 
@@ -100,27 +100,18 @@ io.on('connection', async (socket) => {
         await messageModel.save();
 
         socket.emit('messages', msg)
-    })
+    });
 
-    // socket.on(chatTypeEnum.GENERAL, (msg) => generalChat(socket, msg, accessToken));
-    //
-    // socket.emit("session", sessionID);
-    //
-    // // socket.broadcast.emit('user connected', user.data);
-    //
-    // socket.on('disconnect', () => {
-    //     // socket.broadcast.emit('user disconnect', user.data);
-    //
-    //     // update the connection status of the session
-    //     sessionStore.saveSession(sessionID, {
-    //         accessToken: accessToken,
-    //         user: user,
-    //         connected: false,
-    //     });
-    // });
-    //
-    // await connectionListener(socket);
+    socket.emit("session", sessionID);
 
+    socket.on('disconnect', () => {
+        // update the connection status of the session
+        sessionStore.saveSession(sessionID, {
+            accessToken: accessToken,
+            user: user,
+            connected: false,
+        });
+    });
 })
 
 server.listen(port, () => {
