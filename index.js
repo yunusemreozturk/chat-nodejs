@@ -57,10 +57,9 @@ io.on('connection', async (socket) => {
         if (!(to && type)) return;
 
         let room;
-        //todo: burası kalkabilir createRoom
-        if (type === 0 || type === 2) {
+        if (type == 0 || type == 2) {
             room = await RoomModel.findById(to);
-        } else if (type === 1) {
+        } else if (type == 1) {
             room = await RoomModel.findOne({users: [accessToken, to], type: 1});
         }
 
@@ -89,7 +88,12 @@ io.on('connection', async (socket) => {
     socket.on('sendMessage', async (to, type, msg) => {
         if (!(to && type && msg)) return;
 
-        const room = await RoomModel.findOne({users: [accessToken, to], type: type});
+        let room;
+        if (type == 0 || type == 2) {
+            room = await RoomModel.findById(to);
+        } else if (type == 1) {
+            room = await RoomModel.findOne({users: [accessToken, to], type: 1});
+        }
         if (!room) return;
 
         const messageModel = MessageModel({
