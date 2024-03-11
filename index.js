@@ -35,6 +35,15 @@ async function getRooms(userId) {
     return [...privateAndGroupChats, ...generalChats];
 }
 
+async function getUserMessages(roomId) {
+    const room = await RoomModel.findById(roomId);
+    if (room) {
+        const messages = await MessageModel.find({roomId: roomId});
+
+        return messages;
+    }
+}
+
 io.on('connection', async (socket) => {
     const accessToken = socket.accessToken;
     const sessionID = socket.sessionID;
@@ -47,6 +56,8 @@ io.on('connection', async (socket) => {
         user: user,
         connected: true,
     });
+
+    socket.join(accessToken);
 
     //user'ın içinde bulunduğu odaları aldık ve yolladık
     socket.emit('rooms', await getRooms(accessToken));
@@ -65,9 +76,9 @@ io.on('connection', async (socket) => {
 
         if (room) {
             let roomId = room.id;
-            socket.join(roomId);
+            // socket.join(roomId);
 
-            let messages = await getUserMessage(roomId);
+            let messages = await getUserMessages(roomId);
 
             messages.forEach((message) => {
                 socket.emit('messages', message.message);
@@ -79,9 +90,9 @@ io.on('connection', async (socket) => {
             });
             await roomModel.save();
 
-            socket.join(roomModel.id);
-
             socket.emit('rooms', await getRooms(accessToken));
+
+            socket.join(roomModel.id);
         }
     });
 
@@ -93,6 +104,8 @@ io.on('connection', async (socket) => {
             room = await RoomModel.findById(to);
         } else if (type == 1) {
             room = await RoomModel.findOne({users: [accessToken, to], type: 1});
+
+            socket.broadcast.to(to).emit('rooms', [room])
         }
         if (!room) return;
 
@@ -103,7 +116,7 @@ io.on('connection', async (socket) => {
         })
         await messageModel.save();
 
-        socket.emit('messages', msg)
+        socket.broadcast.to(room.id).emit('messages', msg)
     });
 
     socket.emit("session", sessionID);
