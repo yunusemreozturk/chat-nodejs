@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
 });
 
 async function getRooms(userId) {
-    const privateAndGroupChats = await RoomModel.find({users: userId});
+    const privateAndGroupChats = await RoomModel.find({"users.userId": userId});
     const generalChats = await RoomModel.find({type: 0});
 
     return [...privateAndGroupChats, ...generalChats];
@@ -76,7 +76,7 @@ io.on('connection', async (socket) => {
 
         if (room) {
             let roomId = room.id;
-            // socket.join(roomId);
+            socket.join(roomId);
 
             let messages = await getUserMessages(roomId);
 
@@ -85,7 +85,7 @@ io.on('connection', async (socket) => {
             })
         } else {
             let roomModel = RoomModel({
-                users: [to, accessToken],
+                users: [{"userId": to}, {"userId": accessToken}],
                 type: type
             });
             await roomModel.save();
@@ -96,17 +96,15 @@ io.on('connection', async (socket) => {
         }
     });
 
-    socket.on('sendMessage', async (to, type, msg) => {
-        if (!(to && type && msg)) return;
+    socket.on('sendMessage', async (roomId, type, msg) => {
+        if (!(roomId && type && msg)) return;
 
-        let room;
-        if (type == 0 || type == 2) {
-            room = await RoomModel.findById(to);
-        } else if (type == 1) {
-            room = await RoomModel.findOne({users: [accessToken, to], type: 1});
+        let room = await RoomModel.findById(roomId);
+        let userIds = []
+        room.users.forEach((user) => {
+            userIds.push(user.userId)
+        });
 
-            socket.broadcast.to(to).emit('rooms', [room])
-        }
         if (!room) return;
 
         const messageModel = MessageModel({
@@ -116,7 +114,7 @@ io.on('connection', async (socket) => {
         })
         await messageModel.save();
 
-        socket.broadcast.to(room.id).emit('messages', msg)
+        socket.to(userIds).emit('messages', msg)
     });
 
     socket.emit("session", sessionID);

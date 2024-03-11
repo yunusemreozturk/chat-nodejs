@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 */
 const roomSchema = new mongoose.Schema({
     type: {type: Number, required: true},
-    users: {type: Array, required: true}
+    users: {type: Array, default: []}
 }, {collection: 'rooms', timestamps: true,})
 
 const room = mongoose.model('room', roomSchema)
