@@ -26,22 +26,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/view/index.html'))
 });
 
-async function getRooms(userId) {
-    const privateAndGroupChats = await RoomModel.find({"users.userId": userId});
-    const generalChats = await RoomModel.find({type: 0});
-
-    return [...privateAndGroupChats, ...generalChats];
-}
-
-async function getUserMessages(roomId) {
-    const room = await RoomModel.findById(roomId);
-    if (room) {
-        const messages = await MessageModel.find({roomId: roomId});
-
-        return messages;
-    }
-}
-
 io.on('connection', async (socket) => {
     const accessToken = socket.accessToken;
     const sessionID = socket.sessionID;

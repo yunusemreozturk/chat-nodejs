@@ -6,6 +6,7 @@ const express = require('express');
 const mongoSanitize = require('express-mongo-sanitize');
 const errorHandlerMiddlewares = require('../utils/error_handler');
 const Response = require("../utils/response");
+const {router} = require("./src/routes/index");
 
 const app = express();
 const port = process.env.PORT_API;
@@ -19,6 +20,8 @@ app.use(mongoSanitize({replaceWith: '_'}));
 app.get('/welcome', (req, res) => {
     return new Response({text: 'Welcome'}).success(res);
 });
+
+app.use('/api', router)
 
 //error middleware
 app.use(errorHandlerMiddlewares);
