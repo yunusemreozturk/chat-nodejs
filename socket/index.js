@@ -4,10 +4,9 @@ const express = require('express');
 const mongoSanitize = require('express-mongo-sanitize');
 const path = require("path");
 const {server, io, app} = require("./src/socket/socket")
-const RoomModel = require("../models/room.model");
-const MessageModel = require("../models/message.model");
 const {InMemorySessionStore} = require("../utils/session_store");
 const socketMiddlewares = require("./src/middlewares/socket");
+const {getRooms, getUserMessages, saveRoom, saveMessage, findRoomById, findRoomOne} = require("../api/src/controller");
 
 module.exports = sessionStore = new InMemorySessionStore();
 const port = process.env.PORT_SOCKET;
@@ -44,16 +43,14 @@ io.on('connection', async (socket) => {
     //user'ın içinde bulunduğu odaları aldık ve yolladık
     socket.emit('rooms', await getRooms(accessToken));
 
-    // socket.emit('users', await getUserCurrentRooms(socket));
-
     socket.on('joinRoom', async (to, type) => {
         if (!(to && type)) return;
 
         let room;
         if (type == 0 || type == 2) {
-            room = await RoomModel.findById(to);
+            room = await findRoomById(to);
         } else if (type == 1) {
-            room = await RoomModel.findOne({users: [accessToken, to], type: 1});
+            room = await findRoomOne({users: [accessToken, to], type: 1});
         }
 
         if (room) {
@@ -66,11 +63,7 @@ io.on('connection', async (socket) => {
                 socket.emit('messages', message.message);
             })
         } else {
-            let roomModel = RoomModel({
-                users: [{"userId": to}, {"userId": accessToken}],
-                type: type
-            });
-            await roomModel.save();
+            let roomModel = await saveRoom(to, accessToken, type);
 
             socket.emit('rooms', await getRooms(accessToken));
 
@@ -81,7 +74,7 @@ io.on('connection', async (socket) => {
     socket.on('sendMessage', async (roomId, type, msg) => {
         if (!(roomId && type && msg)) return;
 
-        let room = await RoomModel.findById(roomId);
+        let room = await findRoomById(roomId);
         let userIds = []
         room.users.forEach((user) => {
             userIds.push(user.userId)
@@ -89,12 +82,7 @@ io.on('connection', async (socket) => {
 
         if (!room) return;
 
-        const messageModel = MessageModel({
-            'message': msg,
-            'roomId': room.id,
-            'userToken': accessToken,
-        })
-        await messageModel.save();
+        await saveMessage(msg, room.id, accessToken);
 
         socket.to(userIds).emit('messages', msg)
     });

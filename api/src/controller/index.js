@@ -17,7 +17,40 @@ async function getUserMessages(roomId) {
     }
 }
 
+async function saveRoom(to, accessToken, type) {
+    let roomModel = RoomModel({
+        users: [{"userId": to}, {"userId": accessToken}],
+        type: type
+    });
+    await roomModel.save();
+
+    return roomModel;
+}
+
+async function saveMessage(msg, roomId, accessToken) {
+    const messageModel = MessageModel({
+        'message': msg,
+        'roomId': roomId,
+        'userToken': accessToken,
+    })
+    await messageModel.save();
+
+    return messageModel;
+}
+
+async function findRoomById(roomId) {
+    return RoomModel.findById(roomId);
+}
+
+async function findRoomOne(object) {
+    return RoomModel.findOne(object);
+}
+
 module.exports = {
     getRooms,
-    getUserMessages
+    getUserMessages,
+    saveRoom,
+    saveMessage,
+    findRoomById,
+    findRoomOne
 }
