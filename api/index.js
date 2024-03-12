@@ -1,12 +1,10 @@
-'use strict'
-
 require('dotenv').config();
 require('../db/db_connection');
 const express = require('express');
 const mongoSanitize = require('express-mongo-sanitize');
 const errorHandlerMiddlewares = require('../utils/error_handler');
 const Response = require("../utils/response");
-const {router} = require("./src/routes/index");
+const router = require("./src/routes/index");
 
 const app = express();
 const port = process.env.PORT_API;
