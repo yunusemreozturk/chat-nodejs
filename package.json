@@ -4,8 +4,7 @@
   "description": "",
   "main": "socket/index.js",
   "scripts": {
-    "startSocket": "nodemon socket/index.js",
-    "startApi": "nodemon api/index.js"
+    "start": "concurrently \"nodemon api/index.js\" \"nodemon socket/index.js\" "
   },
   "keywords": [],
   "author": "",

@@ -1,4 +1,5 @@
 const APIError = require("../utils/errors")
+const {CHECK_YOUR_API} = require("./responce_string");
 
 const errorHandlerMiddlewares = (err, req, res, next) => {
     if (err instanceof APIError) {
@@ -10,7 +11,7 @@ const errorHandlerMiddlewares = (err, req, res, next) => {
     console.log('error: ', err);
     return res.status(500).json({
         success: false,
-        code: 'CHECK_YOUR_API',
+        code: CHECK_YOUR_API,
     })
 }
 

@@ -6,7 +6,7 @@ const {
     UNAUTHORIZED,
     NOT_FOUND,
     TOO_MANY_REQUEST
-} = require("../const/responce_string")
+} = require("responce_string")
 
 class Response {
     constructor(data = null, code = null) {
