@@ -10,7 +10,7 @@ const {InMemorySessionStore} = require("../utils/session_store");
 const socketMiddlewares = require("./src/middlewares/socket");
 
 module.exports = sessionStore = new InMemorySessionStore();
-const port = process.env.PORT || 5001;
+const port = process.env.PORT_SOCKET;
 
 //Middlewares
 app.use(express.json({limit: "50mb"}))
