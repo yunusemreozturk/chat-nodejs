@@ -1,10 +1,11 @@
 {
-  "name": "chat-nodejs",
+  "name": "chat-nodejs-socket",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "socket/index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "startSocket": "nodemon socket/index.js",
+    "startApi": "nodemon api/index.js"
   },
   "keywords": [],
   "author": "",
