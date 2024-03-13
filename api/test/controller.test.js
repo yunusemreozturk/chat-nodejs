@@ -10,6 +10,7 @@ const db = require("../../db/db_connection")
 require('dotenv').config();
 
 beforeAll(async () => await db.connect())
+beforeEach(async () => await saveRoom({type: 0}))
 afterEach(async () => await db.clearDatabase())
 // afterAll(async () => await db.closeDatabase())
 
@@ -21,5 +22,24 @@ describe('Room Test', () => {
         const roomModel = await saveRoom({type: 0});
         console.log(roomModel.id)
         expect(roomModel.id).toBeDefined()
+    })
+
+    it('Get Rooms', async () => {
+        const rooms = await getRooms(accessToken1)
+        expect(rooms).toBeDefined()
+
+        const user1Rooms = await getRooms(accessToken1)
+        const user2Rooms = await getRooms(accessToken2)
+
+        var result = false;
+        for (var item1 in user1Rooms) {
+            for (var item2 in user2Rooms) {
+                if (item1.id == item2.id) {
+                    result = true;
+                }
+            }
+        }
+
+        expect(result).toBeTruthy()
     })
 })
