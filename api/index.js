@@ -1,5 +1,5 @@
 require('dotenv').config();
-require('../db/db_connection');
+require('../db/db_connection').connect();
 const express = require('express');
 const mongoSanitize = require('express-mongo-sanitize');
 const errorHandlerMiddlewares = require('../utils/error_handler');

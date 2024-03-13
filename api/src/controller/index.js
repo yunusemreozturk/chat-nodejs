@@ -8,6 +8,39 @@ async function getRooms(userId) {
     return [...privateAndGroupChats, ...generalChats];
 }
 
+async function saveRoom({users, type}) {
+    let room = undefined;
+    if (type == 0) {
+        roomModel = RoomModel({
+            users: [],
+            type: type
+        });
+    } else if (type == 1) {
+        roomModel = RoomModel({
+            users: users,
+            type: type,
+            limit: 2,
+        });
+    } else if (type == 2) {
+        roomModel = RoomModel({
+            users: users,
+            type: type,
+            limit: 8,
+        });
+    }
+    await roomModel.save();
+
+    return roomModel;
+}
+
+async function findRoomById(roomId) {
+    return RoomModel.findById(roomId);
+}
+
+async function findRoomOne(object) {
+    return RoomModel.findOne(object);
+}
+
 async function getUserMessages(roomId) {
     const room = await RoomModel.findById(roomId);
     if (room) {
@@ -15,16 +48,6 @@ async function getUserMessages(roomId) {
 
         return messages;
     }
-}
-
-async function saveRoom(to, accessToken, type) {
-    let roomModel = RoomModel({
-        users: [{"userId": to}, {"userId": accessToken}],
-        type: type
-    });
-    await roomModel.save();
-
-    return roomModel;
 }
 
 async function saveMessage(msg, roomId, accessToken) {
@@ -36,14 +59,6 @@ async function saveMessage(msg, roomId, accessToken) {
     await messageModel.save();
 
     return messageModel;
-}
-
-async function findRoomById(roomId) {
-    return RoomModel.findById(roomId);
-}
-
-async function findRoomOne(object) {
-    return RoomModel.findOne(object);
 }
 
 module.exports = {

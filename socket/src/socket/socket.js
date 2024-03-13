@@ -1,6 +1,8 @@
 const {Server} = require("socket.io");
 const {createServer} = require("node:http");
 const express = require("express");
+const Redis = require("ioredis");
+const redisClient = new Redis();
 
 const app = express();
 const server = createServer(app)

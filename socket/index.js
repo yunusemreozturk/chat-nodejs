@@ -1,5 +1,5 @@
 require('dotenv').config();
-require('../db/db_connection');
+require('../db/db_connection').connect();
 const express = require('express');
 const mongoSanitize = require('express-mongo-sanitize');
 const path = require("path");
@@ -63,7 +63,7 @@ io.on('connection', async (socket) => {
                 socket.emit('messages', message.message);
             })
         } else {
-            let roomModel = await saveRoom(to, accessToken, type);
+            let roomModel = await saveRoom([{"userId": to}, {"userId": accessToken}], type);
 
             socket.emit('rooms', await getRooms(accessToken));
 
