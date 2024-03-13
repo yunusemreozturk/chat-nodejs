@@ -12,10 +12,10 @@ const io = new Server(server, {
     }, cors: {
         origin: process.env.URL + process.env.PORT
     },
-    adapter: require("socket.io-redis")({
-        pubClient: redisClient,
-        subClient: redisClient.duplicate(),
-    }),
+    // adapter: require("socket.io-redis")({
+    //     pubClient: redisClient,
+    //     subClient: redisClient.duplicate(),
+    // }),
 });
 
 module.exports = {server, io, app}

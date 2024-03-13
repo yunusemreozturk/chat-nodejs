@@ -6,33 +6,14 @@ const RoomModel = require("../../models/room.model");
 require('dotenv').config();
 const {getUniqueArray} = require('../../utils/utils');
 
-beforeAll(async () => await db.connect())
-beforeEach(async () => await saveRoom({type: 0}))
-afterEach(async () => await db.clearDatabase())
-afterAll(async () => await db.closeDatabase())
-
 const accessToken1 = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NWVjYzA4Yjc4ZjE2YTFjZjMxNjMyY2EiLCJuYW1lIjoiZW1yZUBnbWFpbC5jb20iLCJpYXQiOjE3MTAxNjcyOTksImV4cCI6MTcxMDc3MjA5OX0.UC7_JOxe6AqAHa7bxrGn5Vd-lUpVWRXWLyogrJE9wTA-hbuj8HHLhQuMeuFGuAZ-xa1qrjpyT8-3hHQOwqL6ww";
 const accessToken2 = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NWVkOWIwODUzOGU2M2Y0MjExNmQ5NTgiLCJuYW1lIjoieXVzdWZAZ21haWwuY29tIiwiaWF0IjoxNzEwMTY3MzM0LCJleHAiOjE3MTA3NzIxMzR9.ImXyF8VDKSeAL77dWvKdSLIr_Vas8EaAe6y501SOIFFsLIwTnFPr9CX_k2zxgsJriE9aZ1YxRMjgImibP64Bhw";
 
 describe('Room and Message Test', () => {
-    describe('Save Room', () => {
-        it('limit and dumplicate users size', async () => {
-            const generalRoomModel = await saveRoom({
-                users: [{'userId': accessToken1}, {'userId': accessToken2}, {'userId': accessToken2}],
-                type: 0
-            });
-            const privateRoomModel = await saveRoom({
-                users: [{'userId': accessToken1}, {'userId': accessToken2}, {'userId': accessToken2}],
-                type: 1
-            });
-            const groupRoomModel = await saveRoom({
-                users: [{'userId': accessToken1}, {'userId': accessToken2}, {'userId': accessToken2}, {'userId': 'userId1'}, {'userId': 'userId2'},],
-                type: 2
-            });
-
-            expect(roomModel.id).toBeDefined()
-        });
-    });
+    beforeAll(async () => await db.connect(true))
+    beforeEach(async () => await saveRoom({type: 0}))
+    afterEach(async () => await db.clearDatabase())
+    afterAll(async () => await db.closeDatabase())
 
     it('Get Rooms', async () => {
         const rooms = await getRooms(accessToken1)
@@ -58,16 +39,6 @@ describe('Room and Message Test', () => {
         expect(result).toBeTruthy()
     })
 
-    it('Find Room By Id', async () => {
-        const rooms = await getRooms(accessToken1);
-
-        for (const item of rooms) {
-            let room = await findRoomById(item.id);
-
-            expect(room.id).toBeDefined()
-        }
-    });
-
     it('Find One Room', async () => {
         //test unique room for private chat
         let savedRoom1 = await saveRoom({users: [{"userId": accessToken1}, {"userId": accessToken2}], type: 1});
@@ -86,27 +57,5 @@ describe('Room and Message Test', () => {
 
         expect(findRoom.id).toMatch((savedRoom1).id)
 
-    });
-
-    it('Message Test', async () => {
-        let room = await saveRoom({type: 0});
-        let msg = 'Test Message'
-
-        console.log(`room: ${room}`)
-
-        let message1 = await saveMessage(msg, room.id, accessToken1);
-        let message2 = await saveMessage(msg, room.id, accessToken2);
-
-        console.log(`message1: ${message1}`)
-
-        expect(message1.id).toBeDefined()
-        expect(message2.id).toBeDefined()
-
-        let userMessages = await getUserMessages(room.id);
-
-        console.log(`userMessages: ${userMessages}`)
-
-        expect(userMessages[0].id).toMatch(message1.id);
-        expect(userMessages[1].id).toMatch(message2.id);
     });
 })

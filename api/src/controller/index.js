@@ -57,9 +57,11 @@ async function findRoomById(roomId) {
 }
 
 async function findRoomOne(userIds, type) {
-    console.log(typeof type)
     if (typeof type !== 'number') return;
 
+    if (type === 0) {
+        return RoomModel.findOne({type: type});
+    }
     return RoomModel.findOne({
         type: type,
         $and: userIds.map(userId => ({"users.userId": userId}))

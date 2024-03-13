@@ -7,6 +7,7 @@ const {server, io, app} = require("./src/socket/socket")
 const {InMemorySessionStore} = require("../utils/session_store");
 const socketMiddlewares = require("./src/middlewares/socket");
 const {getRooms, getUserMessages, saveRoom, saveMessage, findRoomById, findRoomOne} = require("../api/src/controller");
+const {joinRoom, sendMessage, disconnect} = require("./src/controller");
 
 module.exports = sessionStore = new InMemorySessionStore();
 const port = process.env.PORT_SOCKET;
@@ -20,7 +21,7 @@ app.use(express.static(__dirname + '/public'));
 //socket middlewares
 io.use(socketMiddlewares);
 
-//routes
+//routes - for test
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/view/index.html'))
 });
@@ -28,75 +29,24 @@ app.get('/', (req, res) => {
 io.on('connection', async (socket) => {
     const accessToken = socket.accessToken;
     const sessionID = socket.sessionID;
-    const user = socket.user;
 
     if (!accessToken) return;
     //persist session
     sessionStore.saveSession(sessionID, {
         accessToken: accessToken,
-        user: user,
+        user: socket.user,
         connected: true,
     });
 
     socket.join(accessToken);
 
+    socket.on('joinRoom', (to, type) => joinRoom(socket, to, type));
+    socket.on('sendMessage', (roomId, type, msg) => sendMessage(socket, roomId, type, msg));
+    socket.on('disconnect', disconnect);
+
     //user'ın içinde bulunduğu odaları aldık ve yolladık
     socket.emit('rooms', await getRooms(accessToken));
-
-    socket.on('joinRoom', async (to, type) => {
-        if (!(to && type)) return;
-
-        let room;
-        if (type == 0 || type == 2) {
-            room = await findRoomById(to);
-        } else if (type == 1) {
-            room = await findRoomOne({users: [accessToken, to], type: 1});
-        }
-
-        if (room) {
-            let roomId = room.id;
-            socket.join(roomId);
-
-            let messages = await getUserMessages(roomId);
-
-            messages.forEach((message) => {
-                socket.emit('messages', message.message);
-            })
-        } else {
-            let roomModel = await saveRoom([{"userId": to}, {"userId": accessToken}], type);
-
-            socket.emit('rooms', await getRooms(accessToken));
-
-            socket.join(roomModel.id);
-        }
-    });
-
-    socket.on('sendMessage', async (roomId, type, msg) => {
-        if (!(roomId && type && msg)) return;
-
-        let room = await findRoomById(roomId);
-        let userIds = []
-        room.users.forEach((user) => {
-            userIds.push(user.userId)
-        });
-
-        if (!room) return;
-
-        await saveMessage(msg, room.id, accessToken);
-
-        socket.to(userIds).emit('messages', msg)
-    });
-
     socket.emit("session", sessionID);
-
-    socket.on('disconnect', () => {
-        // update the connection status of the session
-        sessionStore.saveSession(sessionID, {
-            accessToken: accessToken,
-            user: user,
-            connected: false,
-        });
-    });
 })
 
 server.listen(port, () => {

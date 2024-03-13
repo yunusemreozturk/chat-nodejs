@@ -5,15 +5,15 @@ const db = require("../../../db/db_connection")
 const RoomModel = require("../../../models/room.model");
 require('dotenv').config();
 
-beforeAll(async () => await db.connect())
-beforeEach(async () => await saveRoom({type: 0}))
-afterEach(async () => await db.clearDatabase())
-afterAll(async () => await db.closeDatabase())
-
 const accessToken1 = "accessToken1";
 const accessToken2 = "accessToken2";
 
 describe('Room and Message Test', () => {
+    beforeAll(async () => await db.connect(true))
+    beforeEach(async () => await saveRoom({type: 0}))
+    afterEach(async () => await db.clearDatabase())
+    afterAll(async () => await db.closeDatabase())
+
     describe('Save Room', () => {
         it('create a general type room', async () => {
             const roomModel = await saveRoom({type: 0});
@@ -56,7 +56,7 @@ describe('Room and Message Test', () => {
     });
 
     it('Find One Room', async () => {
-        let findRoom = await findRoomOne({type: 0});
+        let findRoom = await findRoomOne([], 0);
         console.log(`findRoom: ${findRoom}`)
 
         expect(findRoom.id).toBeDefined()
