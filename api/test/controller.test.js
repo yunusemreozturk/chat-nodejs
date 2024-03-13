@@ -4,6 +4,7 @@ const {
 const db = require("../../db/db_connection")
 const RoomModel = require("../../models/room.model");
 require('dotenv').config();
+const {getUniqueArray} = require('../../utils/utils');
 
 beforeAll(async () => await db.connect())
 beforeEach(async () => await saveRoom({type: 0}))
@@ -14,11 +15,24 @@ const accessToken1 = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NWVjYzA4Y
 const accessToken2 = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NWVkOWIwODUzOGU2M2Y0MjExNmQ5NTgiLCJuYW1lIjoieXVzdWZAZ21haWwuY29tIiwiaWF0IjoxNzEwMTY3MzM0LCJleHAiOjE3MTA3NzIxMzR9.ImXyF8VDKSeAL77dWvKdSLIr_Vas8EaAe6y501SOIFFsLIwTnFPr9CX_k2zxgsJriE9aZ1YxRMjgImibP64Bhw";
 
 describe('Room and Message Test', () => {
-    it('Save Room', async () => {
-        const roomModel = await saveRoom({type: 0});
-        console.log(`roomModel.id: ${roomModel.id}`)
-        expect(roomModel.id).toBeDefined()
-    })
+    describe('Save Room', () => {
+        it('limit and dumplicate users size', async () => {
+            const generalRoomModel = await saveRoom({
+                users: [{'userId': accessToken1}, {'userId': accessToken2}, {'userId': accessToken2}],
+                type: 0
+            });
+            const privateRoomModel = await saveRoom({
+                users: [{'userId': accessToken1}, {'userId': accessToken2}, {'userId': accessToken2}],
+                type: 1
+            });
+            const groupRoomModel = await saveRoom({
+                users: [{'userId': accessToken1}, {'userId': accessToken2}, {'userId': accessToken2}, {'userId': 'userId1'}, {'userId': 'userId2'},],
+                type: 2
+            });
+
+            expect(roomModel.id).toBeDefined()
+        });
+    });
 
     it('Get Rooms', async () => {
         const rooms = await getRooms(accessToken1)

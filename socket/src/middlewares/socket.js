@@ -1,5 +1,5 @@
 const getUser = require("../../../utils/auth_utils")
-const randomId = require("../../../utils/utils")
+const {randomId} = require("../../../utils/utils")
 
 
 module.exports =  async function socketMiddlewares(socket, next) {

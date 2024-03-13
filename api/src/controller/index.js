@@ -1,5 +1,6 @@
 const RoomModel = require("../../../models/room.model");
 const MessageModel = require("../../../models/message.model");
+const {getUniqueArray} = require("../../../utils/utils");
 
 async function getRooms(userId) {
     if (!userId) return [];
@@ -10,6 +11,8 @@ async function getRooms(userId) {
 }
 
 async function saveRoom({users, type}) {
+    users = getUniqueArray(users);
+
     let roomModel = undefined;
     if (type === 0) {
         roomModel = RoomModel({
@@ -17,25 +20,28 @@ async function saveRoom({users, type}) {
             type: type
         });
     } else if (type === 1) {
-        const userList = users.map((item) => {
-            return item.userId;
-        });
-        const checkRoomExist = await findRoomOne(userList, type);
+        const limit = 2;
 
-        if (!checkRoomExist) {
-            roomModel = RoomModel({
-                users: users,
-                type: type,
-                limit: 2,
-            });
-        } else {
-            return checkRoomExist;
+        if (limit === users.length) {
+            const userList = users.map(item => item.userId);
+            const checkRoomExist = await findRoomOne(userList, type);
+
+            if (!checkRoomExist) {
+                roomModel = RoomModel({
+                    users: users,
+                    type: type,
+                    limit: limit,
+                });
+            } else {
+                return checkRoomExist;
+            }
         }
     } else if (type === 2) {
+        const limit = 8;
         roomModel = RoomModel({
             users: users,
             type: type,
-            limit: 8,
+            limit: limit,
         });
     }
 
@@ -45,17 +51,24 @@ async function saveRoom({users, type}) {
 }
 
 async function findRoomById(roomId) {
+    if (!roomId) return;
+
     return RoomModel.findById(roomId);
 }
 
 async function findRoomOne(userIds, type) {
+    console.log(typeof type)
+    if (typeof type !== 'number') return;
+
     return RoomModel.findOne({
-        type: 1,
+        type: type,
         $and: userIds.map(userId => ({"users.userId": userId}))
     });
 }
 
 async function getUserMessages(roomId) {
+    if (!roomId) return;
+
     const room = await RoomModel.findById(roomId);
     if (room) {
         const messages = await MessageModel.find({roomId: roomId});
@@ -65,6 +78,8 @@ async function getUserMessages(roomId) {
 }
 
 async function saveMessage(msg, roomId, accessToken) {
+    if (!msg || !roomId || !accessToken) return;
+
     const messageModel = MessageModel({
         'message': msg,
         'roomId': roomId,
