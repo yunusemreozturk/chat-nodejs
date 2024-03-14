@@ -35,14 +35,14 @@ describe("Socket Test", () => {
     });
 
     it("should emit rooms", (done) => {
-        clientSocket.on(SocketEvents.Room, (arg) => {
+        clientSocket.on(SocketEvents.Rooms, (arg) => {
             console.log(`room: ${arg[0]._id}`)
             expect(arg[0]._id).toBeDefined()
             done();
         });
 
         saveRoom({type: 0}).then(() => {
-            getRooms(accessToken1).then((rooms) => serverSocket.emit(SocketEvents.Room, rooms));
+            getRooms(accessToken1).then((rooms) => serverSocket.emit(SocketEvents.Rooms, rooms));
         });
     });
 
