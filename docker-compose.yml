@@ -1,7 +1,10 @@
-version: "3"
-
+version: "3.3"
 services:
   redis:
-    image: redis:5
+    image: redis:latest
+    container_name: redis
+    restart: always
+    volumes:
+      - /Users/yunusemreozturk/development/docker/redis_volume:/data
     ports:
-      - "6379:6379"
+      - 6379:6379
