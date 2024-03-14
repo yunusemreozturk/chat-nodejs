@@ -8,6 +8,7 @@ const {InMemorySessionStore} = require("../utils/session_store");
 const socketMiddlewares = require("./src/middlewares/socket");
 const {getRooms, getUserMessages, saveRoom, saveMessage, findRoomById, findRoomOne} = require("../api/src/controller");
 const {joinRoom, sendMessage, disconnect} = require("./src/controller");
+const SocketEvents = require("./src/socket/socket_events");
 
 module.exports = sessionStore = new InMemorySessionStore();
 const port = process.env.PORT_SOCKET;
@@ -40,13 +41,13 @@ io.on('connection', async (socket) => {
 
     socket.join(accessToken);
 
-    socket.on('joinRoom', (to, type) => joinRoom(socket, to, type));
-    socket.on('sendMessage', (roomId, type, msg) => sendMessage(socket, roomId, type, msg));
-    socket.on('disconnect', disconnect);
+    socket.on(SocketEvents.JoinRoom, (to, type) => joinRoom(socket, to, type));
+    socket.on(SocketEvents.SendMessage, (roomId, type, msg) => sendMessage(socket, roomId, type, msg));
+    socket.on(SocketEvents.Disconnect, disconnect);
 
     //user'ın içinde bulunduğu odaları aldık ve yolladık
-    socket.emit('rooms', await getRooms(accessToken));
-    socket.emit("session", sessionID);
+    socket.emit(SocketEvents.Rooms, await getRooms(accessToken));
+    socket.emit(SocketEvents.Session, sessionID);
 })
 
 server.listen(port, () => {

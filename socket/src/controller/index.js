@@ -6,6 +6,7 @@ const {
     getRooms,
     saveMessage
 } = require("../../../api/src/controller");
+const SocketEvents = require("../socket/socket_events");
 
 async function joinRoom(socket, to, type) {
     if (!(to && type)) return;
@@ -25,12 +26,12 @@ async function joinRoom(socket, to, type) {
         let messages = await getUserMessages(roomId);
 
         messages.forEach((message) => {
-            socket.emit('messages', message.message);
+            socket.emit(SocketEvents.Message, message.message);
         })
     } else {
         let roomModel = await saveRoom([{"userId": to}, {"userId": accessToken}], type);
 
-        socket.emit('rooms', await getRooms(accessToken));
+        socket.emit(SocketEvents.Rooms, await getRooms(accessToken));
 
         socket.join(roomModel.id);
     }
@@ -49,7 +50,7 @@ async function sendMessage(socket, roomId, type, msg) {
 
     await saveMessage(msg, room.id, socket.accessToken);
 
-    socket.to(userIds).emit('messages', msg)
+    socket.to(userIds).emit(SocketEvents.Message, msg)
 }
 
 async function disconnect() {
