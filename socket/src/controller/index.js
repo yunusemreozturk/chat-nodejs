@@ -9,7 +9,7 @@ const {
 const SocketEvents = require("../socket/socket_events");
 
 async function joinRoom(socket, to, type) {
-    if (!(to && type)) return;
+    if (!(to && typeof type === 'number')) return;
     const accessToken = socket.accessToken;
 
     let room;
@@ -38,7 +38,7 @@ async function joinRoom(socket, to, type) {
 }
 
 async function sendMessage(socket, roomId, type, msg) {
-    if (!(roomId && type && msg)) return;
+    if (!(roomId && typeof type === 'number' && msg)) return;
 
     let room = await findRoomById(roomId);
     let userIds = []
