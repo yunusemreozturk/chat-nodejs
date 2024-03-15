@@ -5,6 +5,14 @@ services:
     container_name: redis
     restart: always
     volumes:
-      - /Users/yunusemreozturk/development/docker/redis_volume:/data
+      - /Users/genos/development/docker/redis_volume:/data
+    ports:
+      - 6379:6379
+  redis_stack:
+    image: redis/redis-stack-server:latest
+    container_name: redis_stack
+    restart: always
+    volumes:
+      - /Users/genos/development/docker/redis_stack_volume:/data
     ports:
       - 6379:6379
