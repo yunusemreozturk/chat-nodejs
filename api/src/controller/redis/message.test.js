@@ -28,7 +28,7 @@ describe('Redis Message Controller Test', () => {
 
         const messages = await _messageController.find(roomId)
 
-        console.log(`messages: ${messages}`)
+        console.log(`messages: ${JSON.stringify(messages)}`)
 
         expect(messages[0].roomId).toBe(roomId)
     });

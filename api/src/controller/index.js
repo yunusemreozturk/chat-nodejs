@@ -1,6 +1,11 @@
 const RoomModel = require("../../../models/room.model");
 const MessageModel = require("../../../models/message.model");
 const {getUniqueArray} = require("../../../utils/utils");
+const {RedisMessageController} = require("./redis/message.controller");
+const Redis = require("ioredis");
+
+const _redisClient = new Redis();
+const _redisMessageController = new RedisMessageController(_redisClient);
 
 async function getRooms(userId) {
     if (!userId) return [];
@@ -73,7 +78,7 @@ async function getUserMessages(roomId) {
 
     const room = await RoomModel.findById(roomId);
     if (room) {
-        const messages = await MessageModel.find({roomId: roomId});
+        const messages = await _redisMessageController.find(roomId);
 
         return messages;
     }
@@ -82,14 +87,14 @@ async function getUserMessages(roomId) {
 async function saveMessage(msg, roomId, accessToken) {
     if (!msg || !roomId || !accessToken) return;
 
-    const messageModel = MessageModel({
+    const data = {
         'message': msg,
         'roomId': roomId,
         'userToken': accessToken,
-    })
-    await messageModel.save();
+    };
+    await _redisMessageController.save(data);
 
-    return messageModel;
+    return data;
 }
 
 module.exports = {

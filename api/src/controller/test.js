@@ -3,16 +3,31 @@ const {
 } = require('./index')
 const db = require("../../../db/db_connection")
 const RoomModel = require("../../../models/room.model");
+const Redis = require("ioredis");
 require('dotenv').config();
 
+const redisClient = new Redis();
 const accessToken1 = "accessToken1";
 const accessToken2 = "accessToken2";
 
 describe('Room and Message Test', () => {
     beforeAll(async () => await db.connect(true))
     beforeEach(async () => await saveRoom({type: 0}))
-    afterEach(async () => await db.clearDatabase())
-    afterAll(async () => await db.closeDatabase())
+    afterEach(async () => {
+        await db.clearDatabase();
+        redisClient.keys('messages:*').then(function (keys) {
+            var pipeline = redisClient.pipeline();
+            keys.forEach(function (key) {
+                pipeline.del(key);
+            });
+            return pipeline.exec();
+        });
+
+    })
+    afterAll(async () => {
+        await db.closeDatabase();
+        redisClient.disconnect();
+    })
 
     describe('Save Room', () => {
         it('create a general type room', async () => {
@@ -71,16 +86,16 @@ describe('Room and Message Test', () => {
         let message1 = await saveMessage(msg, room.id, accessToken1);
         let message2 = await saveMessage(msg, room.id, accessToken2);
 
-        console.log(`message1: ${message1}`)
+        console.log(`message1: ${message1.roomId}`)
 
-        expect(message1.id).toBeDefined()
-        expect(message2.id).toBeDefined()
+        expect(message1.roomId).toBeDefined()
+        expect(message2.roomId).toBeDefined()
 
         let userMessages = await getUserMessages(room.id);
 
-        console.log(`userMessages: ${userMessages}`)
+        console.log(`userMessages: ${JSON.stringify(userMessages)}`)
 
-        expect(userMessages[0].id).toMatch(message1.id);
-        expect(userMessages[1].id).toMatch(message2.id);
+        expect(userMessages[0].roomId).toMatch(message1.roomId);
+        expect(userMessages[1].roomId).toMatch(message2.roomId);
     });
 })

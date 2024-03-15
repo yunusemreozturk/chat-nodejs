@@ -1,7 +1,6 @@
-const {randomId} = require("../../utils/utils");
+const {randomId} = require("../../../../utils/utils");
 
-/* abstract */
-class RoomController {
+/* abstract */ class MessageController {
     save(object) {
     }
 
@@ -11,7 +10,7 @@ class RoomController {
 
 const CONVERSATION_TTL = 24 * 60 * 60;
 
-class RedisRoomController extends RoomController {
+class RedisMessageController extends MessageController {
     constructor(redisClient) {
         super();
         this.redisClient = redisClient
@@ -44,4 +43,4 @@ class RedisRoomController extends RoomController {
     };
 }
 
-module.exports = {RedisRoomController}
+module.exports = {RedisMessageController}
