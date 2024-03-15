@@ -51,5 +51,5 @@ io.on('connection', async (socket) => {
 })
 
 server.listen(port, () => {
-    console.log(`Server is running on ${process.env.URL + port}`)
+    console.log(`Socket is running on ${process.env.URL + port}`)
 })

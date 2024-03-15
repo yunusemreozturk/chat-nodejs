@@ -10,9 +10,13 @@ async function getUserMessages(roomId) {
 
     const room = await RoomModel.findById(roomId);
     if (room) {
-        const messages = await _redisMessageController.find(roomId);
+        var messages = await _redisMessageController.find(roomId);
 
-        return messages;
+        return messages.map(element => {
+            if (element.deleted === undefined || element.deleted !== false) {
+                return element;
+            }
+        });
     }
 }
 
