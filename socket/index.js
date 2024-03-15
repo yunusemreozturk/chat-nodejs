@@ -6,7 +6,7 @@ const path = require("path");
 const {server, io, app} = require("./src/socket/socket")
 const {InMemorySessionStore} = require("../utils/session_store");
 const socketMiddlewares = require("./src/middlewares/socket");
-const {getRooms} = require("../api/src/controller");
+const {getRooms} = require("../api/src/controller/room.controller");
 const {joinRoom, sendMessage, disconnect} = require("./src/controller");
 const SocketEvents = require("./src/socket/socket_events");
 

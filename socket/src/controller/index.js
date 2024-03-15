@@ -1,11 +1,5 @@
-const {
-    findRoomById,
-    findRoomOne,
-    getUserMessages,
-    saveRoom,
-    getRooms,
-    saveMessage
-} = require("../../../api/src/controller");
+const {getUserMessages, saveMessage} = require("../../../api/src/controller/message.controller");
+const {findRoomById, findRoomOne, saveRoom, getRooms} = require("../../../api/src/controller/room.controller");
 const SocketEvents = require("../socket/socket_events");
 
 async function joinRoom(socket, to, type) {

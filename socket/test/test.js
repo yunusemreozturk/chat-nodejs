@@ -2,7 +2,7 @@ const {createServer} = require("node:http");
 const {Server} = require("socket.io");
 const ioc = require("socket.io-client");
 const db = require("../../db/db_connection");
-const {getRooms, saveRoom, findRoomById} = require("../../api/src/controller");
+const {getRooms, saveRoom} = require("../../api/src/controller/room.controller");
 const SocketEvents = require("../src/socket/socket_events");
 const {joinRoom, sendMessage} = require("../src/controller");
 

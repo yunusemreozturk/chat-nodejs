@@ -1,8 +1,6 @@
-const {
-    getRooms, getUserMessages, saveRoom, saveMessage, findRoomById, findRoomOne
-} = require('./index')
+const {getRooms, saveRoom, findRoomById, findRoomOne} = require('./room.controller')
+const {getUserMessages, saveMessage} = require('./message.controller')
 const db = require("../../../db/db_connection")
-const RoomModel = require("../../../models/room.model");
 const Redis = require("ioredis");
 require('dotenv').config();
 
