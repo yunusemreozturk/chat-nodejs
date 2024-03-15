@@ -2,7 +2,7 @@ const getUser = require("../../../utils/auth_utils")
 const {randomId} = require("../../../utils/utils")
 
 
-module.exports =  async function socketMiddlewares(socket, next) {
+module.exports = async function socketMiddlewares(socket, next) {
     const sessionID = socket.handshake.headers.session_id;
     const accessToken = socket.handshake.headers.access_token;
 
