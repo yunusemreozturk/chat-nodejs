@@ -8,7 +8,7 @@ const Response = require("../../utils/response");
 const router = require("./routes");
 const authMiddlewares = require('../../middlewares/auth.middlewares')
 
-function createServer() {
+function createApp() {
     const app = express();
 
     //Middlewares
@@ -30,4 +30,4 @@ function createServer() {
     return app
 }
 
-module.exports = createServer
+module.exports = createApp

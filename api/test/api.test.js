@@ -1,28 +1,34 @@
+const {PARAMETERS_MISSING_OR_MALFORMED, SUCCESS} = require("../../utils/responce_string");
+const createServer = require("../src/app");
 const request = require('supertest');
-const {app} = require("../index");
-const {PARAMETERS_MISSING_OR_MALFORMED} = require("../../utils/responce_string");
-const createServer = require("../src/server");
-
 require('dotenv').config();
 
+const {agent: superagent} = require("supertest");
+
+const app = createServer();
+
+const TOKEN = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NWYyMWM3OTZmYjk1ZjA0ZDFhOGFkMzgiLCJuYW1lIjoiZW1yZUBnbWFpbC5jb20iLCJpYXQiOjE3MTA2NTA1NTIsImV4cCI6MTcxMTI1NTM1Mn0.AJhXzTqaqktSXxwb_I3meckB5H6UlGTkexxLxYq8VvzSFCXP1xwozVYOuHfKDjYgyDlhP1xxjsDHaKJu7Bbrjw";
+
 describe('Api Endpoints Test', () => {
-    var server;
-    beforeAll(()=> {
-        server = createServer();
+    const supertest = superagent(app).auth(TOKEN, {type: 'bearer'});
 
-        server.listen(process.env.PORT_API, () => {
-            console.log(`App is running on http://localhost:${process.env.PORT_API}`)
-        })
+    it('GET /welcome', async () => {
+        const response = await supertest.get('/welcome');
+
+        console.log(JSON.stringify(response.body))
+
+        expect(response.body.code).toBe(SUCCESS)
     })
 
-    it('POST /get_rooms', async () => {
+    it('GET /get_rooms', async () => {
+        const response = await supertest.post('/api/get_rooms').send({userId: 'testtest'});
 
-        const response = await request().post('/api/get_rooms');
-        console.log(`burada: ${response.status}`)
-        expect(response.body).toBe(PARAMETERS_MISSING_OR_MALFORMED)
+        console.log(JSON.stringify(response.body))
+
+        expect(response.body.code).toBe(SUCCESS)
     })
 
-    it('POST /get_user_messages', async () => {
-
-    });
+    // it('POST /get_user_messages', async () => {
+    //
+    // });
 })
