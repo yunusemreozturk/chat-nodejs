@@ -11,6 +11,7 @@ const {joinRoom, sendMessage, disconnect} = require("./../src/controller");
 const SocketEvents = require("./../src/socket/socket_events");
 const Response = require("../../utils/response");
 const {WELCOME} = require("../../utils/response_string");
+const Logger = require("../../utils/logger");
 
 function createApp() {
     const sessionStore = new InMemorySessionStore();
@@ -19,6 +20,7 @@ function createApp() {
     app.use(express.json({limit: "50mb"}))
     app.use(express.urlencoded({limit: "50mb", extended: true, parameterLimit: 50000}))
     app.use(mongoSanitize({replaceWith: '_'}));
+    app.use(Logger.printLog);
     //socket middlewares
     io.use(socketMiddlewares);
 
