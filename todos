@@ -1,1 +1,11 @@
-api'de her gelen isteği doğrulayan bir middleware yap
+todo: api'de her gelen isteği doğrulayan bir middleware yap
+
+##### AUTH
+todo: MVVM yapisi olustur
+todo: api/user/verify bu yolu düzenle
+todo: oluşturduğun hash'leri araştır ne ne değildir gibisinden: => const isValid = await bcrypt.compare(token, passwordResetToken.token);
+todo: view html'leri public'e taşı
+todo: uygulamayı tanımak için ios ve android için keyler oluştur
+todo: token kontrolü yap
+todo: mongoose şemalarını id ile yap
+todo: api validasyonlarını düzgün yap

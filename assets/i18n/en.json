@@ -1,0 +1,23 @@
+{
+	"8": 8,
+	"WELCOME": "Welcome",
+	"CHECK_YOUR_API": "An unknown error occurred, please try again later.",
+	"EMAIL_NOT_VERIFIED": "Email is not verified.",
+	"CRASH_WHEN_SEND_EMAIL": "Crash when send email.",
+	"CHECK_EMAIL_OR_PASSWORD": "Check your email or password.",
+	"EMAIL_ALREADY_IN_USE": "Email is already in use.",
+	"USER_CREATE_SUCCESS": "User successfully created.",
+	"CRASH_WHEN_USER_CREATED": "Crash when user created.",
+	"PASSWORD_FORGET_EMAIL_SEND": "Link send to your email.",
+	"USER_VERIFIED_FAILED": "User verification failed, try again later.",
+	"USER_ALREADY_VERIFIED": "User already verified.",
+	"USER_VERIFIED_SUCCESS": "User verification success.",
+	"FOLLOW_VALIDATION_RULES": "Follow the verification rules.",
+	"UPLOAD_PICTURE_ERROR": "Crash when picture send.",
+	"UPLOAD_PICTURE_SUCCESS": "Picture send success.",
+	"INVALID_SESSION": "Invalid session.",
+	"PASSWORD_CHANGE_SUCCESS": "Change password success.",
+	"PASSWORD_MUST_SAME": "Password must match.",
+	"CANNOT_BE_EMPTY": "This field cannot be empty.",
+	"TYPE_NOT_SUPPORTED": "This type is not allowed."
+}

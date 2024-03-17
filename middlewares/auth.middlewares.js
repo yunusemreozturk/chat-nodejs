@@ -1,5 +1,5 @@
 const getUser = require("../utils/auth_utils");
-const {UNAUTHORIZED} = require("../utils/responce_string");
+const {UNAUTHORIZED} = require("../utils/response_string");
 const APIError = require("../utils/errors");
 
 module.exports = async function authMiddlewares(req, res, next) {

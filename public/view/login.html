@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!-- Created By CodingNepal -->
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Glowing Inputs Login Form UI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+</head>
+<body>
+<div class="login-form">
+    <div class="text">
+        LOGIN
+    </div>
+    <form id="form" action="">
+        <div class="field">
+            <div class="fas fa-envelope"></div>
+            <input id="emailInput" type="text" placeholder="Email">
+        </div>
+        <div class="field">
+            <div class="fas fa-lock"></div>
+            <input id="passwordInput" type="password" placeholder="Password">
+        </div>
+        <button>LOGIN</button>
+        <div class="link">
+            Not a member?
+            <a href="#" onclick="goToAnotherPage()">Signup now</a>
+        </div>
+    </form>
+</div>
+</body>
+<script>
+    const form = document.getElementById('form');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        login();
+    });
+
+    function login() {
+        const apiUrl = 'http://localhost:3000/api/auth/login';
+        const emailInput = document.getElementById('emailInput').value;
+        const passwordInput = document.getElementById('passwordInput').value;
+
+        if (emailInput && passwordInput) {
+            const postData = {
+                email: emailInput,
+                password: passwordInput,
+            };
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(postData),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle the data from the API
+                    // console.log('Data from API:', data);
+                    window.location.href = 'http://localhost:3001?access_token=' + data.data['access_token'];
+                })
+                .catch(error => {
+                    console.error('Error posting data:', error);
+                });
+        }
+    }
+
+    function goToAnotherPage() {
+        window.location.href = "signup.html";
+    }
+</script>
+</html>
+

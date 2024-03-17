@@ -1,0 +1,23 @@
+{
+	"8": 8,
+	"WELCOME": "Hoş Geldiniz",
+	"CHECK_YOUR_API": "Bilinmeyen bir hata oluştu daha sonra tekrar deneyiniz.",
+	"EMAIL_NOT_VERIFIED": "Email daha doğrulanmadı.",
+	"CRASH_WHEN_SEND_EMAIL": "Email yollarken sorun oluştu.",
+	"CHECK_EMAIL_OR_PASSWORD": "Parola veya email yanlış.",
+	"EMAIL_ALREADY_IN_USE": "Bu email adresi zaten yayında.",
+	"USER_CREATE_SUCCESS": "Kullanıcı başarıyla oluşturuldu.",
+	"CRASH_WHEN_USER_CREATED": "Kullanıcı oluşturulurken hata oluştu.",
+	"PASSWORD_FORGET_EMAIL_SEND": "Parola doğrulama emaili gönderildi.",
+	"USER_VERIFIED_FAILED": "Kullanıcı doğrulama başarısız.",
+	"USER_ALREADY_VERIFIED": "Kullanıcı zaten doğrulandı.",
+	"USER_VERIFIED_SUCCESS": "Kullanıcı doğrulama başarılı.",
+	"FOLLOW_VALIDATION_RULES": "Metin alanlarını doğru girdinden emin ol.",
+	"UPLOAD_PICTURE_ERROR": "Fotoğraf yüklerken sorun oluştu.",
+	"UPLOAD_PICTURE_SUCCESS": "Fotoğraf yükleme başarılı",
+	"INVALID_SESSION": "Geçersiz Oturum",
+	"PASSWORD_CHANGE_SUCCESS": "Parola değiştirme başarılı.",
+	"PASSWORD_MUST_SAME": "Parolalar aynı olmalı.",
+	"CANNOT_BE_EMPTY": "Bu alan boş olamaz.",
+	"TYPE_NOT_SUPPORTED": "Bu dosya tipi desteklenmiyor."
+}

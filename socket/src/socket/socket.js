@@ -10,7 +10,7 @@ const io = new Server(server, {
     connectionStateRecovery: {
         maxDisconnectionDuration: 2 * 60 * 1000, skipMiddlewares: true,
     }, cors: {
-        origin: process.env.URL + process.env.PORT
+        origin: process.env.URL
     },
     adapter: require("socket.io-redis")({
         pubClient: redisClient,

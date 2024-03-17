@@ -1,5 +1,5 @@
 const APIError = require("../utils/errors")
-const {CHECK_YOUR_API} = require("./responce_string");
+const {CHECK_YOUR_API} = require("./response_string");
 
 const errorHandlerMiddlewares = (err, req, res, next) => {
     if (err instanceof APIError) {

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Glowing Inputs Login Form UI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+</head>
+<body>
+<div class="login-form">
+    <div class="text">
+        SIGNUP
+    </div>
+    <form id="form" action="">
+        <div class="field">
+            <div class="fas fa-envelope"></div>
+            <input id="emailInput" type="text" placeholder="Email">
+        </div>
+        <div class="field">
+            <div class="fas fa-lock"></div>
+            <input id="passwordInput" type="password" placeholder="Password">
+        </div>
+        <button onclick="register()">SIGNUP</button>
+    </form>
+</div>
+</body>
+<script>
+    function register() {
+        const apiUrl = 'http://localhost:3000/api/auth/register';
+        const emailInput = document.getElementById('emailInput').value;
+        const passwordInput = document.getElementById('passwordInput').value;
+
+        const postData = {
+            email: emailInput,
+            password: passwordInput,
+        };
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(postData),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Data from API:', data);
+                window.location.href = 'http://localhost:3001?access_token=' + data.data['access_token'];
+            })
+            .catch(error => {
+                console.log('Error posting data:', error);
+            });
+    }
+</script>
+</html>
+
