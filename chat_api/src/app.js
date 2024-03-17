@@ -23,7 +23,7 @@ function createApp() {
 
     //routes
     app.get('/welcome', (req, res) => {
-        return new Response({text: res.__(WELCOME)}).success(res);
+        return new Response({text: WELCOME}).success(res);
     });
     app.use('/api', router)
 

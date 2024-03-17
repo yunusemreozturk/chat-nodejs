@@ -6,6 +6,8 @@ const mongoSanitize = require('express-mongo-sanitize');
 const Logger = require('../../utils/logger');
 const errorHandlerMiddlewares = require('../../utils/error_handler');
 const router = require('../src/routes');
+const Response = require("../../utils/response");
+const {WELCOME} = require("../../utils/response_string");
 
 function createApp() {
     const app = express();
@@ -19,6 +21,9 @@ function createApp() {
     app.use(Logger.printLog);
 
     //routes
+    app.get('/welcome', (req, res) => {
+        return new Response({text: WELCOME}).success(res);
+    });
     app.use('/api', router)
 
     //error middleware

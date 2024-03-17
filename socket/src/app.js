@@ -9,6 +9,8 @@ const socketMiddlewares = require("./../src/middlewares/socket");
 const {getRooms} = require("../../chat_api/src/controller/room.controller");
 const {joinRoom, sendMessage, disconnect} = require("./../src/controller");
 const SocketEvents = require("./../src/socket/socket_events");
+const Response = require("../../utils/response");
+const {WELCOME} = require("../../utils/response_string");
 
 function createApp() {
     const sessionStore = new InMemorySessionStore();
@@ -21,6 +23,9 @@ function createApp() {
     io.use(socketMiddlewares);
 
     //routes - for test
+    app.get('/welcome', (req, res) => {
+        return new Response({text: WELCOME}).success(res);
+    });
     app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname, '/public/view/index.html'))
     });

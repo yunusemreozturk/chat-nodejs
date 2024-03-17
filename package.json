@@ -4,7 +4,7 @@
   "description": "",
   "main": "socket/index.js",
   "scripts": {
-    "start": "concurrently \"nodemon auth/index.js\"",
+    "start": "concurrently \"nodemon chat_api/index.js\" \"nodemon socket/index.js\" \"nodemon auth/index.js\"",
     "test": "jest"
   },
   "keywords": [],
